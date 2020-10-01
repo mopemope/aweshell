@@ -488,8 +488,7 @@ If `window' is nil, get current window."
 
 (defun aweshell-dedicated-exist-p ()
   (and (aweshell-buffer-exist-p aweshell-dedicated-buffer)
-       (aweshell-window-exist-p aweshell-dedicated-window)
-       ))
+       (aweshell-window-exist-p aweshell-dedicated-window)))
 
 (defun aweshell-window-exist-p (window)
   "Return `non-nil' if WINDOW exist.
@@ -753,8 +752,7 @@ This advice can make `other-window' skip `aweshell' dedicated window."
       (pcomplete-here* (append (pcmpl-git-get-refs "heads")
                                (pcmpl-git-get-refs "tags"))))
      (t
-      (while (pcomplete-here (pcomplete-entries))))))
-  )
+      (while (pcomplete-here (pcomplete-entries)))))))
 
 ;; eshell-did-you-mean
 ;; command not found (“did you mean…” feature) in Eshell.
@@ -764,8 +762,7 @@ This advice can make `other-window' skip `aweshell' dedicated window."
              1 nil
              #'(lambda ()
                  (require 'eshell-did-you-mean)
-                 (eshell-did-you-mean-setup)
-                 ))))
+                 (eshell-did-you-mean-setup)))))
 
 ;; Make cat with syntax highlight.
 (defun aweshell-cat-with-syntax-highlight (filename)
@@ -829,7 +826,7 @@ This advice can make `other-window' skip `aweshell' dedicated window."
       nil))
 
   (defun aweshell-parse-zsh-history ()
-    "Parse the bash history."
+    "Parse the zsh history."
     (if (file-exists-p "~/.zsh_history")
         (let (collection zsh_history)
           (aweshell-reload-shell-history)
@@ -844,6 +841,21 @@ This advice can make `other-window' skip `aweshell' dedicated window."
             zsh_history))
       nil))
 
+  (defun aweshell-parse-fish-history ()
+    "Parse the fish history."
+    (if (file-exists-p "~/.local/share/fish/fish_history")
+        (let (collection fish_history)
+          (aweshell-reload-shell-history)
+          (setq collection
+                (nreverse
+                 (with-temp-buffer (insert-file-contents (file-truename "~/.local/share/fish/fish_history"))
+                                   (mapcar #'(lambda (x) (cadr x)) (s-match-strings-all "^- cmd: \\(.*\\)$" (buffer-string))))))
+          (when (and collection (> (length collection) 0)
+                     (setq fish_history collection))
+            fish_history))
+      nil))
+
+
   (defun aweshell-parse-shell-history ()
     "Parse history from eshell/bash/zsh/ ."
     (delete-dups
@@ -853,7 +865,8 @@ This advice can make `other-window' skip `aweshell' dedicated window."
       (append
        (ring-elements eshell-history-ring)
        (aweshell-parse-bash-history)
-       (aweshell-parse-zsh-history)))))
+       (aweshell-parse-zsh-history)
+       (aweshell-parse-fish-history)))))
 
   (defun aweshell-autosuggest--prefix ()
     "Get current eshell input.
