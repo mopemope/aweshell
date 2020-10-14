@@ -698,8 +698,8 @@ This advice can make `other-window' skip `aweshell' dedicated window."
     (rename-buffer (format "Aweshell: %s" (epe-fish-path default-directory))
                    t)))
 
-(add-hook 'eshell-directory-change-hook #'aweshell-sync-dir-buffer-name)
-(add-hook 'eshell-mode-hook #'aweshell-sync-dir-buffer-name)
+;; (add-hook 'eshell-directory-change-hook #'aweshell-sync-dir-buffer-name)
+;; (add-hook 'eshell-mode-hook #'aweshell-sync-dir-buffer-name)
 
 ;; Add completions for git command.
 (when (executable-find "git")
