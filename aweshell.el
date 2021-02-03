@@ -270,7 +270,7 @@
   "Alert command face."
   :group 'aweshell)
 
-(defcustom aweshell-dedicated-window-height 14
+(defcustom aweshell-dedicated-window-height 30
   "The height of `aweshell' dedicated window."
   :type 'integer
   :group 'aweshell)
@@ -698,8 +698,8 @@ This advice can make `other-window' skip `aweshell' dedicated window."
     (rename-buffer (format "Aweshell: %s" (epe-fish-path default-directory))
                    t)))
 
-;; (add-hook 'eshell-directory-change-hook #'aweshell-sync-dir-buffer-name)
-;; (add-hook 'eshell-mode-hook #'aweshell-sync-dir-buffer-name)
+(add-hook 'eshell-directory-change-hook #'aweshell-sync-dir-buffer-name)
+(add-hook 'eshell-mode-hook #'aweshell-sync-dir-buffer-name)
 
 ;; Add completions for git command.
 (when (executable-find "git")
